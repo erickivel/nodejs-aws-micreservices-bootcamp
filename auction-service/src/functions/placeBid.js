@@ -1,5 +1,7 @@
+import validator from '@middy/validator';
 import createError from 'http-errors';
 
+import placeBidSchema from '../lib/schemas/placeBidSchema';
 import commonMiddleware from '../lib/commonMiddleware';
 import { document } from '../utils/dynamodbClient';
 
@@ -45,4 +47,11 @@ async function placeBid(event, context) {
   };
 }
 
-export const handler = commonMiddleware(placeBid);
+export const handler = commonMiddleware(placeBid)
+  .use(validator({
+    inputSchema: placeBidSchema,
+    ajvOptions: {
+      useDefaults: false,
+      strict: false,
+    },
+  }));
